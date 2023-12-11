@@ -14,8 +14,8 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Time arrival_time;
-    private LocalDate check_in_date;
-    private LocalDate checkout_date;
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
     private String comments;
 
     @ManyToOne
@@ -29,11 +29,11 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(Integer id, Time arrival_time, LocalDate check_in_date, LocalDate checkout_date, String comments, Product product, User user) {
+    public Reservation(Integer id, Time arrival_time, LocalDate checkInDate, LocalDate checkOutDate, String comments, Product product, User user) {
         this.id = id;
         this.arrival_time = arrival_time;
-        this.check_in_date = check_in_date;
-        this.checkout_date = checkout_date;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
         this.comments = comments;
         this.product = product;
         this.user = user;
@@ -56,19 +56,19 @@ public class Reservation {
     }
 
     public LocalDate getCheck_in_date() {
-        return check_in_date;
+        return checkInDate;
     }
 
     public void setCheck_in_date(LocalDate check_in_date) {
-        this.check_in_date = check_in_date;
+        this.checkInDate = checkInDate;
     }
 
     public LocalDate getCheckout_date() {
-        return checkout_date;
+        return checkOutDate;
     }
 
     public void setCheckout_date(LocalDate checkout_date) {
-        this.checkout_date = checkout_date;
+        this.checkOutDate = checkOutDate;
     }
 
     public String getComments() {

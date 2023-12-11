@@ -1,6 +1,7 @@
 package com.grupo4.digitalcars.controller;
 
 
+import com.grupo4.digitalcars.model.Product;
 import com.grupo4.digitalcars.model.Reservation;
 import com.grupo4.digitalcars.repository.UserRepository;
 import com.grupo4.digitalcars.model.User;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,7 +61,7 @@ public class ReservationController  {
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody Reservation reservation)  {
         User user = userRepository.findById(reservation.getUser().getId()).orElse(null);
-        if (user == null) {
+        if (user == null || isFechasDisponibles(reservation) == false) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El Usuario no se encuentra debe Ingresar o Registrarse  para poder hacer una reserva ");
         } else {
             return ResponseEntity.ok(reservationService.saveReservation(reservation));
@@ -86,6 +88,30 @@ public class ReservationController  {
             return ResponseEntity.ok("Se eliminó con éxito la reserva con ID: " + id);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la reserva con ID: " + id);
+    }
+
+
+    //-------------------------------luis ------------------------
+    @GetMapping("/fechas-disponibles/{productId}")
+    public ResponseEntity<List<LocalDate>> obtenerFechasDisponibles(@PathVariable Integer productId) {
+        List<LocalDate> fechasDisponibles = reservationService.obtenerFechasDisponiblesParaDosMeses(productId);
+        return new ResponseEntity<>(fechasDisponibles, HttpStatus.OK);
+    }
+
+    private boolean isFechasDisponibles(Reservation reservation) {
+
+        Product product = reservation.getProduct();
+        if (product != null) {
+            List<Reservation> reservasConflictivas = reservationService.findByProductIdAndCheckInDateLessThanEqualAndCheckOutDateGreaterThanEqual(
+                    product.getId(),
+                    reservation.getCheck_in_date(),
+                    reservation.getCheckout_date()
+            );
+
+            System.out.println("Reservas conflictivas: " + reservasConflictivas);
+
+            return reservasConflictivas.isEmpty();
+        }else {return false;}
     }
 
 }
